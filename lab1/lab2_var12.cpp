@@ -1,311 +1,291 @@
 #include <iostream>
 #include <string>
-#include <cmath>
 #include <iomanip>
 #include <sstream>
 
 using namespace std;
 
-// Структура Account
-struct Account {
-    string ownerSurname;
-    long accountNumber;
-    double interestRate;
-    double balance;
+// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ СТРУКТУРУ (внешние функции) =====
+
+struct TimeStruct {
+    int hours;
+    int minutes;
+    int seconds;
 };
 
-// Метод инициализации
-void init(Account& acc, const string& surname, long number, double rate, double initialBalance) {
-    acc.ownerSurname = surname;
-    acc.accountNumber = number;
-    acc.interestRate = rate;
-    acc.balance = initialBalance;
+// Метод инициализации для структуры
+void init(TimeStruct& time, int h, int m, int s) {
+    time.hours = h;
+    time.minutes = m;
+    time.seconds = s;
+    normalizeTime(time);
 }
 
 // Ввод с клавиатуры
-void read(Account& acc) {
-    cout << "Введите фамилию владельца: ";
-    cin >> acc.ownerSurname;
-    cout << "Введите номер счета: ";
-    cin >> acc.accountNumber;
-    cout << "Введите процент начисления: ";
-    cin >> acc.interestRate;
-    cout << "Введите начальный баланс: ";
-    cin >> acc.balance;
+void read(TimeStruct& time) {
+    cout << "Введите часы: ";
+    cin >> time.hours;
+    cout << "Введите минуты: ";
+    cin >> time.minutes;
+    cout << "Введите секунды: ";
+    cin >> time.seconds;
+    normalizeTime(time);
 }
 
 // Вывод на экран
-void display(const Account& acc) {
-    cout << "Владелец: " << acc.ownerSurname << endl;
-    cout << "Номер счета: " << acc.accountNumber << endl;
-    cout << "Процентная ставка: " << acc.interestRate << "%" << endl;
-    cout << "Баланс: " << fixed << setprecision(2) << acc.balance << " руб." << endl;
+void display(const TimeStruct& time) {
+    cout << "Время: " 
+         << setw(2) << setfill('0') << time.hours << ":"
+         << setw(2) << setfill('0') << time.minutes << ":"
+         << setw(2) << setfill('0') << time.seconds << endl;
 }
 
 // Преобразование в строку
-string toString(const Account& acc) {
+string toString(const TimeStruct& time) {
     stringstream ss;
-    ss << "Владелец: " << acc.ownerSurname 
-       << ", Счет: " << acc.accountNumber 
-       << ", Ставка: " << acc.interestRate << "%"
-       << ", Баланс: " << fixed << setprecision(2) << acc.balance << " руб.";
+    ss << setw(2) << setfill('0') << time.hours << ":"
+       << setw(2) << setfill('0') << time.minutes << ":"
+       << setw(2) << setfill('0') << time.seconds;
     return ss.str();
 }
 
-// Сменить владельца счета
-void changeOwner(Account& acc, const string& newSurname) {
-    acc.ownerSurname = newSurname;
-}
-
-// Снять деньги со счета
-bool withdraw(Account& acc, double amount) {
-    if (amount > 0 && amount <= acc.balance) {
-        acc.balance -= amount;
-        return true;
-    }
-    return false;
-}
-
-// Положить деньги на счет
-void deposit(Account& acc, double amount) {
-    if (amount > 0) {
-        acc.balance += amount;
-    }
-}
-
-// Начислить проценты
-void addInterest(Account& acc) {
-    acc.balance += acc.balance * (acc.interestRate / 100);
-}
-
-// Перевести в доллары (курс приблизительный)
-double toDollars(const Account& acc, double exchangeRate = 90.0) {
-    return acc.balance / exchangeRate;
-}
-
-// Перевести в евро (курс приблизительный)
-double toEuros(const Account& acc, double exchangeRate = 100.0) {
-    return acc.balance / exchangeRate;
-}
-
-// Получить сумму прописью (упрощенная версия)
-string amountInWords(double amount) {
-    int rubles = static_cast<int>(amount);
-    int kopecks = static_cast<int>((amount - rubles) * 100);
-    
-    string units[] = {"", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"};
-    string teens[] = {"десять", "одиннадцать", "двенадцать", "тринадцать", "четырнадцать", "пятнадцать", 
-                     "шестнадцать", "семнадцать", "восемнадцать", "девятнадцать"};
-    string tens[] = {"", "десять", "двадцать", "тридцать", "сорок", "пятьдесят", 
-                    "шестьдесят", "семьдесят", "восемьдесят", "девяносто"};
-    string hundreds[] = {"", "сто", "двести", "триста", "четыреста", "пятьсот", 
-                        "шестьсот", "семьсот", "восемьсот", "девятьсот"};
-    
-    string result;
-    
-    // Обрабатываем рубли
-    if (rubles == 0) {
-        result = "ноль рублей ";
-    } else {
-        // Тысячи
-        int thousands = rubles / 1000;
-        if (thousands > 0) {
-            // Упрощенная обработка тысяч
-            result += to_string(thousands) + " тысяч ";
-            rubles %= 1000;
-        }
-        
-        // Сотни
-        int hundred = rubles / 100;
-        if (hundred > 0) {
-            result += hundreds[hundred] + " ";
-            rubles %= 100;
-        }
-        
-        // Десятки и единицы
-        if (rubles >= 10 && rubles < 20) {
-            result += teens[rubles - 10] + " ";
-        } else {
-            int ten = rubles / 10;
-            if (ten > 0) {
-                result += tens[ten] + " ";
-            }
-            int unit = rubles % 10;
-            if (unit > 0) {
-                result += units[unit] + " ";
-            }
-        }
-// Правильное окончание для рублей
-        int lastDigit = rubles % 10;
-        if (lastDigit == 1 && rubles != 11) {
-            result += "рубль ";
-        } else if (lastDigit >= 2 && lastDigit <= 4 && (rubles < 10 || rubles > 20)) {
-            result += "рубля ";
-        } else {
-            result += "рублей ";
-        }
+// Нормализация времени (приведение к корректному формату)
+void normalizeTime(TimeStruct& time) {
+    time.minutes += time.seconds / 60;
+    time.seconds %= 60;
+    if (time.seconds < 0) {
+        time.seconds += 60;
+        time.minutes--;
     }
     
-    // Копейки
-    result += to_string(kopecks) + " копеек";
+    time.hours += time.minutes / 60;
+    time.minutes %= 60;
+    if (time.minutes < 0) {
+        time.minutes += 60;
+        time.hours--;
+    }
     
-    return result;
+    time.hours %= 24;
+    if (time.hours < 0) {
+        time.hours += 24;
+    }
 }
 
-// Демонстрация работы со структурой
-void demoStruct() {
-    cout << "=== РЕАЛИЗАЦИЯ ЧЕРЕЗ СТРУКТУРУ ===" << endl;
-    
-    Account myAccount;
-    init(myAccount, "Иванов", 1234567890, 5.0, 10000.0);
-    
-    cout << "Исходный счет:" << endl;
-    display(myAccount);
-    cout << endl;
-    
-    // Операции со счетом
-    changeOwner(myAccount, "Петров");
-    deposit(myAccount, 5000.0);
-    withdraw(myAccount, 2000.0);
-    addInterest(myAccount);
-    cout << "После операций:" << endl;
-    display(myAccount);
-    cout << endl;
-    cout << "В долларах: " << toDollars(myAccount) << " USD" << endl;
-    cout << "В евро: " << toEuros(myAccount) << " EUR" << endl;
-    cout << "Сумма прописью: " << amountInWords(myAccount.balance) << endl;
-    cout << "Строковое представление: " << toString(myAccount) << endl;}
-    
-class AccountClass {
+// Операции с временем (внешние функции)
+
+// Добавление секунд
+void addSeconds(TimeStruct& time, int seconds) {
+    time.seconds += seconds;
+    normalizeTime(time);
+}
+
+// Вычитание секунд
+void subtractSeconds(TimeStruct& time, int seconds) {
+    time.seconds -= seconds;
+    normalizeTime(time);
+}
+
+// Разница между двумя временами в секундах
+int differenceInSeconds(const TimeStruct& time1, const TimeStruct& time2) {
+    int total1 = time1.hours * 3600 + time1.minutes * 60 + time1.seconds;
+    int total2 = time2.hours * 3600 + time2.minutes * 60 + time2.seconds;
+    return abs(total1 - total2);
+}
+
+// Проверка, является ли время корректным
+bool isValidTime(const TimeStruct& time) {
+    return time.hours >= 0 && time.hours < 24 &&
+           time.minutes >= 0 && time.minutes < 60 &&
+           time.seconds >= 0 && time.seconds < 60;
+}
+
+// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС (методы класса) =====
+
+class TimeClass {
 private:
-    string ownerSurname;
-    long accountNumber;
-    double interestRate;
-    double balance;
+    int hours;
+    int minutes;
+    int seconds;
+
+    // Вспомогательный метод для нормализации
+    void normalize() {
+        minutes += seconds / 60;
+        seconds %= 60;
+        if (seconds < 0) {
+            seconds += 60;
+            minutes--;
+        }
+        
+        hours += minutes / 60;
+        minutes %= 60;
+        if (minutes < 0) {
+            minutes += 60;
+            hours--;
+        }
+        
+        hours %= 24;
+        if (hours < 0) {
+            hours += 24;
+        }
+    }
 
 public:
-    // Конструктор инициализации
-    AccountClass(const string& surname = "", long number = 0, 
-                double rate = 0.0, double initialBalance = 0.0) {
-        ownerSurname = surname;
-        accountNumber = number;
-        interestRate = rate;
-        balance = initialBalance;
+    // Конструкторы
+    TimeClass() : hours(0), minutes(0), seconds(0) {}
+    TimeClass(int h, int m, int s) : hours(h), minutes(m), seconds(s) {
+        normalize();
+    }
+
+    // Метод инициализации
+    void init(int h, int m, int s) {
+        hours = h;
+        minutes = m;
+        seconds = s;
+        normalize();
     }
 
     // Ввод с клавиатуры
     void read() {
-        cout << "Введите фамилию владельца: ";
-        cin >> ownerSurname;
-        cout << "Введите номер счета: ";
-        cin >> accountNumber;
-        cout << "Введите процент начисления: ";
-        cin >> interestRate;
-        cout << "Введите начальный баланс: ";
-        cin >> balance;
+        cout << "Введите часы: ";
+        cin >> hours;
+        cout << "Введите минуты: ";
+        cin >> minutes;
+        cout << "Введите секунды: ";
+        cin >> seconds;
+        normalize();
     }
 
     // Вывод на экран
     void display() const {
-        cout << "Владелец: " << ownerSurname << endl;
-        cout << "Номер счета: " << accountNumber << endl;
-        cout << "Процентная ставка: " << interestRate << "%" << endl;
-        cout << "Баланс: " << fixed << setprecision(2) << balance << " руб." << endl;
+        cout << "Время: " 
+             << setw(2) << setfill('0') << hours << ":"
+             << setw(2) << setfill('0') << minutes << ":"
+             << setw(2) << setfill('0') << seconds << endl;
     }
 
     // Преобразование в строку
     string toString() const {
         stringstream ss;
-        ss << "Владелец: " << ownerSurname 
-           << ", Счет: " << accountNumber 
-           << ", Ставка: " << interestRate << "%"
-           << ", Баланс: " << fixed << setprecision(2) << balance << " руб.";
+        ss << setw(2) << setfill('0') << hours << ":"
+<< setw(2) << setfill('0') << minutes << ":"
+           << setw(2) << setfill('0') << seconds;
         return ss.str();
     }
 
-    // Сменить владельца счета
-    void changeOwner(const string& newSurname) {
-        ownerSurname = newSurname;
+    // Операции с временем (методы класса)
+
+    // Добавление секунд
+    void addSeconds(int sec) {
+        seconds += sec;
+        normalize();
     }
 
-    // Снять деньги со счета
-    bool withdraw(double amount) {
-        if (amount > 0 && amount <= balance) {
-            balance -= amount;
-            return true;
-        }
-        return false;
+    // Вычитание секунд
+    void subtractSeconds(int sec) {
+        seconds -= sec;
+        normalize();
     }
 
-    // Положить деньги на счет
-    void deposit(double amount) {
-        if (amount > 0) {
-            balance += amount;
-        }
+    // Разница между двумя временами в секундах
+    int differenceInSeconds(const TimeClass& other) const {
+        int total1 = hours * 3600 + minutes * 60 + seconds;
+        int total2 = other.hours * 3600 + other.minutes * 60 + other.seconds;
+        return abs(total1 - total2);
     }
 
-    // Начислить проценты
-    void addInterest() {
-        balance += balance * (interestRate / 100);
+    // Проверка, является ли время корректным
+    bool isValid() const {
+        return hours >= 0 && hours < 24 &&
+               minutes >= 0 && minutes < 60 &&
+               seconds >= 0 && seconds < 60;
     }
 
-    // Перевести в доллары
-    double toDollars(double exchangeRate = 90.0) const {
-        return balance / exchangeRate;
-    }
-
-    // Перевести в евро
-    double toEuros(double exchangeRate = 100.0) const {
-        return balance / exchangeRate;
-    }
-
-    // Получить сумму прописью
-    string amountInWords() const {
-        return ::amountInWords(balance);
-    }
-
-    // Геттеры для доступа к приватным полям
-    string getOwnerSurname() const { return ownerSurname; }
-    long getAccountNumber() const { return accountNumber; }
-    double getInterestRate() const { return interestRate; }
-    double getBalance() const { return balance; }
-
-    // Сеттеры (опционально)
-    void setInterestRate(double rate) { 
-        if (rate >= 0) interestRate = rate; 
-    }
+    // Геттеры
+    int getHours() const { return hours; }
+    int getMinutes() const { return minutes; }
+    int getSeconds() const { return seconds; }
 };
 
-// Демонстрация работы с классом
-void demoClass() {
-    cout << "\n=== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС ===" << endl;
-    
-    AccountClass myAccount("Сидоров", 9876543210, 7.5, 15000.0);
-    
-    cout << "Исходный счет:" << endl;
-    myAccount.display();
-    cout << endl;
-    
-    // Операции со счетом
-    myAccount.changeOwner("Кузнецов");
-    myAccount.deposit(3000.0);
-    myAccount.withdraw(1000.0);
-    myAccount.addInterest();
-    
-    cout << "После операций:" << endl;
-    myAccount.display();
-    cout << endl;
-    
-    cout << "В долларах: " << myAccount.toDollars() << " USD" << endl;
-    cout << "В евро: " << myAccount.toEuros() << " EUR" << endl;
-    cout << "Сумма прописью: " << myAccount.amountInWords() << endl;
-    cout << "Строковое представление: " << myAccount.toString() << endl;
-}
+// ===== ГЛАВНАЯ ФУНКЦИЯ =====
 
-// Главная функция
 int main() {
-    demoStruct();
-    demoClass();
+    cout << "=== ЛАБОРАТОРНАЯ РАБОТА №2. СТРУКТУРЫ И КЛАССЫ ===" << endl << endl;
+
+    // Демонстрация работы со структурой
+    cout << "1. РАБОТА СО СТРУКТУРОЙ (внешние функции):" << endl;
+    cout << "=============================================" << endl;
+
+    TimeStruct time1;
+    init(time1, 14, 30, 45);
+    cout << "Инициализированное время: ";
+    display(time1);
+    cout << "Строковое представление: " << toString(time1) << endl;
+
+    cout << endl << "Введите новое время:" << endl;
+    read(time1);
+    cout << "Введенное время: ";
+    display(time1);
+
+    // Операции со структурой
+    addSeconds(time1, 90);
+    cout << "После добавления 90 секунд: ";
+    display(time1);
+
+    subtractSeconds(time1, 45);
+    cout << "После вычитания 45 секунд: ";
+    display(time1);
+
+    TimeStruct time2;
+    init(time2, 15, 0, 0);
+    cout << "Второе время: ";
+    display(time2);
+    cout << "Разница в секундах: " << differenceInSeconds(time1, time2) << endl;
+    cout << "Корректное время: " << (isValidTime(time1) ? "Да" : "Нет") << endl;
+
+    cout << endl << "2. РАБОТА С КЛАССОМ (методы класса):" << endl;
+    cout << "========================================" << endl;
+
+    TimeClass time3(23, 59, 30);
+    cout << "Инициализированное время: ";
+    time3.display();
+    cout << "Строковое представление: " << time3.toString() << endl;
+
+    cout << endl << "Введите новое время:" << endl;
+    TimeClass time4;
+    time4.read();
+    cout << "Введенное время: ";
+    time4.display();
+
+    // Операции с классом
+    time4.addSeconds(120);
+    cout << "После добавления 120 секунд: ";
+    time4.display();
+
+    time4.subtractSeconds(60);
+    cout << "После вычитания 60 секунд: ";
+    time4.display();
+
+    TimeClass time5(12, 0, 0);
+    cout << "Второе время: ";
+    time5.display();
+    cout << "Разница в секундах: " << time4.differenceInSeconds(time5) << endl;
+    cout << "Корректное время: " << (time4.isValid() ? "Да" : "Нет") << endl;
+
+    // Демонстрация пограничных случаев
+    cout << endl << "3. ДЕМОНСТРАЦИЯ ПОГРАНИЧНЫХ СЛУЧАЕВ:" << endl;
+    cout << "========================================" << endl;
+
+    TimeClass edgeCase(23, 59, 59);
+    cout << "Начальное время: ";
+    edgeCase.display();
     
+    edgeCase.addSeconds(2);
+    cout << "После добавления 2 секунд: ";
+    edgeCase.display();
+
+    edgeCase.subtractSeconds(3600);
+    cout << "После вычитания 3600 секунд: ";
+    edgeCase.display();
+
     return 0;
 }
