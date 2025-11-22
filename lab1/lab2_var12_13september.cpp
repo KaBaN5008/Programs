@@ -13,7 +13,6 @@ private:
     double balance;
 
 public:
-    // Конструктор без аргументов
     Account() {
         ownerLastName = "";
         accountNumber = "";
@@ -63,12 +62,12 @@ public:
         balance += balance * (interestRate / 100.0);
     }
     
-    // Метод для перевода в доллары (курс условный)
+    // Метод для перевода в доллары 
     double toDollars(double exchangeRate = 75.0) const {
         return balance / exchangeRate;
     }
     
-    // Метод для перевода в евро (курс условный)
+    // Метод для перевода в евро 
     double toEuros(double exchangeRate = 85.0) const {
         return balance / exchangeRate;
     }
@@ -96,7 +95,7 @@ public:
     }
 
 private:
-    // Вспомогательный метод для преобразования числа в слова
+    //метод для преобразования числа в слова
     string convertToWords(double number) const {
         int rubles = static_cast<int>(number);
         int kopecks = static_cast<int>((number - rubles) * 100);
@@ -174,13 +173,13 @@ else result += units[thousands] + " тысяч ";
 int main() {
     cout << "=== Демонстрация работы класса Account ===" << endl << endl;
     
-    // 1. Создание объекта с помощью конструктора инициализации
+    // 1. Создание с помощью конструктора инициализации
     cout << "1. Создание счета с помощью конструктора инициализации:" << endl;
     Account account1("Иванов", "40817810099910004312", 5.5, 15000.0);
     account1.displayInfo();
     cout << endl;
     
-    // 2. Создание объекта с помощью конструктора без аргументов
+    // 2. Создание с помощью конструктора без аргументов
     cout << "2. Создание счета с помощью конструктора без аргументов:" << endl;
     Account account2;
     account2.displayInfo();
@@ -214,19 +213,16 @@ int main() {
     demoAccount.displayInfo();
     cout << endl;
     
-    // Смена владельца
     cout << "После смены владельца:" << endl;
     demoAccount.changeOwner("Васильев");
     demoAccount.displayInfo();
     cout << endl;
     
-    // Пополнение счета
     cout << "После пополнения на 5000 руб.:" << endl;
     demoAccount.deposit(5000.0);
     demoAccount.displayInfo();
     cout << endl;
     
-    // Снятие денег
     cout << "После снятия 2000 руб.:" << endl;
     if (demoAccount.withdraw(2000.0)) {
         demoAccount.displayInfo();
@@ -235,24 +231,20 @@ int main() {
     }
     cout << endl;
     
-    // Начисление процентов
     cout << "После начисления процентов:" << endl;
     demoAccount.applyInterest();
     demoAccount.displayInfo();
     cout << endl;
     
-    // Конвертация в валюту
     cout << "Баланс в долларах: " << fixed << setprecision(2) 
          << demoAccount.toDollars() << " USD" << endl;
     cout << "Баланс в евро: " << fixed << setprecision(2) 
          << demoAccount.toEuros() << " EUR" << endl;
     cout << endl;
     
-    // Сумма прописью
     cout << "Сумма прописью: " << demoAccount.getAmountInWords() << endl;
 cout << endl;
     
-    // Демонстрация работы с разными суммами
     cout << "6. Демонстрация суммы прописью для разных сумм:" << endl;
     Account test1("Тест", "00000000000000000001", 0.0, 1.0);
     Account test2("Тест", "00000000000000000002", 0.0, 1234.56);
