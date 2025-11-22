@@ -10,19 +10,16 @@ private:
     double y;
 
 public:
-    // Конструктор без аргументов
     Point() {
         x = 0.0;
         y = 0.0;
     }
     
-    // Конструктор инициализации
     Point(double xCoord, double yCoord) {
         x = xCoord;
         y = yCoord;
     }
     
-    // Конструктор копирования
     Point(const Point& other) {
         x = other.x;
         y = other.y;
@@ -55,42 +52,39 @@ public:
         if (angle < 0) angle += 360.0; // нормализация угла
     }
     
-    // Геттеры
     double getX() const { return x; }
     double getY() const { return y; }
     
-    // Сеттеры
     void setX(double newX) { x = newX; }
     void setY(double newY) { y = newY; }
     
-    // Метод для вывода информации о точке
     void displayInfo() const {
         cout << "Точка (" << fixed << setprecision(2) << x << ", " << y << ")" << endl;
     }
     
     // ПЕРЕГРУЗКИ ОПЕРАТОРОВ:
     
-    // 1. Перегрузка оператора == (сравнение на совпадение)
+    // 1
     bool operator==(const Point& other) const {
         return x == other.x && y == other.y;
     }
     
-    // 2. Перегрузка оператора != (сравнение на несовпадение)
+    // 2
     bool operator!=(const Point& other) const {
         return !(*this == other);
     }
     
-    // 3. Перегрузка оператора + (сложение координат точек)
+    // 3
     Point operator+(const Point& other) const {
         return Point(x + other.x, y + other.y);
     }
     
-    // 4. Перегрузка оператора - (вычитание координат точек)
+    // 4
     Point operator-(const Point& other) const {
         return Point(x - other.x, y - other.y);
     }
     
-    // 5. Перегрузка оператора << для вывода
+    // 5
     friend ostream& operator<<(ostream& os, const Point& p) {
         os << "(" << fixed << setprecision(2) << p.x << ", " << p.y << ")";
         return os;
@@ -100,25 +94,21 @@ public:
 int main() {
     cout << "=== Демонстрация работы класса Point ===" << endl << endl;
     
-    // 1. Создание объекта с помощью конструктора инициализации
     cout << "1. Создание точки с помощью конструктора инициализации:" << endl;
     Point point1(3.0, 4.0);
     point1.displayInfo();
     cout << endl;
-    
-    // 2. Создание объекта с помощью конструктора без аргументов
+
     cout << "2. Создание точки с помощью конструктора без аргументов:" << endl;
     Point point2;
     point2.displayInfo();
     cout << endl;
     
-    // 3. Создание объекта с помощью конструктора копирования
     cout << "3. Создание точки с помощью конструктора копирования:" << endl;
     Point point3(point1);
     point3.displayInfo();
     cout << endl;
     
-    // 4. Создание массива объектов
     cout << "4. Создание массива точек:" << endl;
     Point points[3] = {
         Point(1.0, 2.0),
@@ -132,7 +122,6 @@ int main() {
     }
     cout << endl;
     
-    // 5. Демонстрация всех методов
     cout << "5. Демонстрация всех методов:" << endl;
     Point demoPoint(3.0, 4.0);
     
@@ -140,35 +129,29 @@ int main() {
     demoPoint.displayInfo();
     cout << endl;
     
-    // Перемещение по оси X
     cout << "После перемещения по X на +2.5: ";
     demoPoint.moveX(2.5);
     demoPoint.displayInfo();
     
-    // Перемещение по оси Y
     cout << "После перемещения по Y на -1.5: ";
     demoPoint.moveY(-1.5);
 demoPoint.displayInfo();
     cout << endl;
     
-    // Расстояние до начала координат
     cout << "Расстояние до начала координат: " 
          << fixed << setprecision(2) << demoPoint.distanceToOrigin() << endl;
     
-    // Расстояние между двумя точками
     Point otherPoint(1.0, 1.0);
     cout << "Расстояние до точки " << otherPoint << ": " 
          << demoPoint.distanceTo(otherPoint) << endl;
     cout << endl;
     
-    // Преобразование в полярные координаты
     double radius, angle;
     demoPoint.toPolar(radius, angle);
     cout << "Полярные координаты: радиус = " << radius 
          << ", угол = " << angle << "°" << endl;
     cout << endl;
-    
-    // 6. Демонстрация работы с разными точками
+
     cout << "6. Демонстрация для разных точек:" << endl;
     Point test1(0.0, 5.0);
     Point test2(5.0, 0.0);
