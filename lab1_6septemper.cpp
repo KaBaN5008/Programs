@@ -5,7 +5,6 @@
 #include <cmath>
 using namespace std;
 
-// ---------- УТИЛИТЫ ----------
 static void die(const string& msg);
 static double ipow_double(double base, long long exp);
 static bool is_denom(int v);
