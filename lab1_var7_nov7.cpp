@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <utility>
 
 using namespace std;
 
@@ -12,9 +13,9 @@ private:
         T value;
     };
     
-    Node* data;
-    size_t capacity;
-    size_t count;
+    Node* data = nullptr;
+    size_t capacity = 0;
+    size_t count = 0;
     
     void resize() {
         const auto newCapacity = (capacity == 0) ? 1 : capacity * 2;
@@ -40,9 +41,9 @@ private:
     }
 
 public:
-    PriorityQueue() : data(nullptr), capacity(0), count(0) {}
+    PriorityQueue() = default;
     
-    PriorityQueue(const initializer_list<pair<int, T>>& init) : data(nullptr), capacity(0), count(0) {
+    explicit PriorityQueue(const initializer_list<pair<int, T>>& init) : data(nullptr), capacity(0), count(0) {
         for (const auto& p : init) {
             enqueue(p.first, p.second);
         }
@@ -51,6 +52,9 @@ public:
     ~PriorityQueue() {
         delete[] data;
     }
+    
+    PriorityQueue(const PriorityQueue&) = delete;
+    PriorityQueue& operator=(const PriorityQueue&) = delete;
     
     void enqueue(const int priority, const T& value) {
         if (count == capacity) {
@@ -74,7 +78,7 @@ public:
     }
     
     T dequeue() {
-        if (count == 0) throw out_of_range("empty");
+        if (count == 0) throw out_of_range("PriorityQueue is empty");
         auto value = data[0].value;
         --count;
         if (count > 0) {
@@ -122,18 +126,13 @@ public:
     bool empty() const { return count == 0; }
     size_t size() const { return count; }
     
-    // Добавим методы с использованием decltype для демонстрации
-    auto getCapacity() const -> decltype(capacity) {
-        return capacity;
+    const T& top() const {
+        if (count == 0) throw out_of_range("PriorityQueue is empty");
+        return data[0].value;
     }
     
-    auto getCount() const -> decltype(count) {
-        return count;
-    }
-    
-    // Метод для получения приоритета первого элемента с использованием auto
-    auto topPriority() const -> decltype(data[0].priority) {
-        if (count == 0) throw out_of_range("empty");
+    int topPriority() const {
+        if (count == 0) throw out_of_range("PriorityQueue is empty");
         return data[0].priority;
     }
 };
@@ -143,28 +142,30 @@ int main() {
     pq.enqueue(3, "Low");
     pq.enqueue(1, "Critical");
     pq.enqueue(2, "Normal");
-    cout << pq << endl;
+    
+    const auto queueStr = pq.toString();
+    cout << "Queue as string: " << queueStr << endl;
+    
+    cout << "Size: " << pq.size() << endl;
+    cout << "Is empty: " << boolalpha << pq.empty() << endl;
+    
+    const auto testQueue = pq;
+    cout << "Copied queue: " << testQueue << endl;
 
-    // Используем auto в main
-    auto task = string{};
+    string task;
     while (pq.dequeue(task)) {
-        cout << "Do: " << task << endl;
+        const auto message = "Do: " + task;
+cout << message << endl;
     }
 
     istringstream input("10 A 5 B 15 C");
-    auto pq2 = PriorityQueue<string>{};
+    PriorityQueue<string> pq2;
     pq2.read(input);
-    cout << pq2 << endl;
-
-    // Демонстрация методов с auto и decltype
-    const auto size = pq2.size();
-    const auto capacity = pq2.getCapacity();
-    cout << "Size: " << size << ", Capacity: " << capacity << endl;
     
-    if (!pq2.empty()) {
-        const auto topPrio = pq2.topPriority();
-cout << "Top priority: " << topPrio << endl;
-    }
+    decltype(pq2)::value_type firstTask = pq2.dequeue();
+    cout << "First task: " << firstTask << endl;
+    
+    cout << "Remaining queue: " << pq2 << endl;
 
     return 0;
 }
