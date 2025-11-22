@@ -5,7 +5,7 @@
 
 using namespace std;
 
-// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ СТРУКТУРУ (внешние функции) =====
+// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ СТРУКТУРУ =====
 
 struct TimeStruct {
     int hours;
@@ -13,7 +13,6 @@ struct TimeStruct {
     int seconds;
 };
 
-// Метод инициализации для структуры
 void init(TimeStruct& time, int h, int m, int s) {
     time.hours = h;
     time.minutes = m;
@@ -21,7 +20,6 @@ void init(TimeStruct& time, int h, int m, int s) {
     normalizeTime(time);
 }
 
-// Ввод с клавиатуры
 void read(TimeStruct& time) {
     cout << "Введите часы: ";
     cin >> time.hours;
@@ -32,7 +30,6 @@ void read(TimeStruct& time) {
     normalizeTime(time);
 }
 
-// Вывод на экран
 void display(const TimeStruct& time) {
     cout << "Время: " 
          << setw(2) << setfill('0') << time.hours << ":"
@@ -40,7 +37,6 @@ void display(const TimeStruct& time) {
          << setw(2) << setfill('0') << time.seconds << endl;
 }
 
-// Преобразование в строку
 string toString(const TimeStruct& time) {
     stringstream ss;
     ss << setw(2) << setfill('0') << time.hours << ":"
@@ -49,7 +45,6 @@ string toString(const TimeStruct& time) {
     return ss.str();
 }
 
-// Нормализация времени (приведение к корректному формату)
 void normalizeTime(TimeStruct& time) {
     time.minutes += time.seconds / 60;
     time.seconds %= 60;
@@ -71,35 +66,29 @@ void normalizeTime(TimeStruct& time) {
     }
 }
 
-// Операции с временем (внешние функции)
-
-// Добавление секунд
 void addSeconds(TimeStruct& time, int seconds) {
     time.seconds += seconds;
     normalizeTime(time);
 }
 
-// Вычитание секунд
 void subtractSeconds(TimeStruct& time, int seconds) {
     time.seconds -= seconds;
     normalizeTime(time);
 }
 
-// Разница между двумя временами в секундах
 int differenceInSeconds(const TimeStruct& time1, const TimeStruct& time2) {
     int total1 = time1.hours * 3600 + time1.minutes * 60 + time1.seconds;
     int total2 = time2.hours * 3600 + time2.minutes * 60 + time2.seconds;
     return abs(total1 - total2);
 }
 
-// Проверка, является ли время корректным
 bool isValidTime(const TimeStruct& time) {
     return time.hours >= 0 && time.hours < 24 &&
            time.minutes >= 0 && time.minutes < 60 &&
            time.seconds >= 0 && time.seconds < 60;
 }
 
-// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС (методы класса) =====
+// ===== РЕАЛИЗАЦИЯ ЧЕРЕЗ КЛАСС =====
 
 class TimeClass {
 private:
@@ -107,7 +96,6 @@ private:
     int minutes;
     int seconds;
 
-    // Вспомогательный метод для нормализации
     void normalize() {
         minutes += seconds / 60;
         seconds %= 60;
@@ -130,13 +118,11 @@ private:
     }
 
 public:
-    // Конструкторы
     TimeClass() : hours(0), minutes(0), seconds(0) {}
     TimeClass(int h, int m, int s) : hours(h), minutes(m), seconds(s) {
         normalize();
     }
 
-    // Метод инициализации
     void init(int h, int m, int s) {
         hours = h;
         minutes = m;
@@ -144,7 +130,6 @@ public:
         normalize();
     }
 
-    // Ввод с клавиатуры
     void read() {
         cout << "Введите часы: ";
         cin >> hours;
@@ -155,7 +140,6 @@ public:
         normalize();
     }
 
-    // Вывод на экран
     void display() const {
         cout << "Время: " 
              << setw(2) << setfill('0') << hours << ":"
@@ -163,7 +147,6 @@ public:
              << setw(2) << setfill('0') << seconds << endl;
     }
 
-    // Преобразование в строку
     string toString() const {
         stringstream ss;
         ss << setw(2) << setfill('0') << hours << ":"
@@ -172,41 +155,33 @@ public:
         return ss.str();
     }
 
-    // Операции с временем (методы класса)
-
-    // Добавление секунд
     void addSeconds(int sec) {
         seconds += sec;
         normalize();
     }
 
-    // Вычитание секунд
     void subtractSeconds(int sec) {
         seconds -= sec;
         normalize();
     }
 
-    // Разница между двумя временами в секундах
     int differenceInSeconds(const TimeClass& other) const {
         int total1 = hours * 3600 + minutes * 60 + seconds;
         int total2 = other.hours * 3600 + other.minutes * 60 + other.seconds;
         return abs(total1 - total2);
     }
 
-    // Проверка, является ли время корректным
     bool isValid() const {
         return hours >= 0 && hours < 24 &&
                minutes >= 0 && minutes < 60 &&
                seconds >= 0 && seconds < 60;
     }
 
-    // Геттеры
     int getHours() const { return hours; }
     int getMinutes() const { return minutes; }
     int getSeconds() const { return seconds; }
 };
 
-// ===== ГЛАВНАЯ ФУНКЦИЯ =====
 
 int main() {
     cout << "=== ЛАБОРАТОРНАЯ РАБОТА №2. СТРУКТУРЫ И КЛАССЫ ===" << endl << endl;
